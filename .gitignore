@@ -1,0 +1,41 @@
+# Build artifacts
+/build/
+/build-asan/
+/cmake-build-*/
+/CMakeFiles/
+/CMakeCache.txt
+/compile_commands.json
+
+# Standalone binaries and compiler outputs
+/server
+/server_asan
+/test_eventfd
+/test_pool
+/test_pool_asan
+*.o
+*.a
+*.so
+*.out
+*.core
+core
+core.*
+
+# Generated load-test files (do not commit tens of MB of random data)
+/www/test.bin
+/www/test32.bin
+/www/test*.bin
+
+# Editor, OS, logs
+.vscode/
+.idea/
+.DS_Store
+*.log
+__pycache__/
+
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*:Zone.Identifier
