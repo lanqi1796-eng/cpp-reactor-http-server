@@ -43,7 +43,6 @@ private:
 
     std::weak_ptr<void> owner_;
     bool tied_ = false;
-
 };
 
 

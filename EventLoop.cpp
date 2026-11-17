@@ -177,7 +177,7 @@ void EventLoop::addChannel(Channel* channel)
                   EPOLL_CTL_ADD,
                   fd,
                   &ev) == -1)
-    {//第三个参数fd是用来干什么的？是用来表示监听的套接字的
+    {
         perror("ADD_ERROR");
         return;
     }

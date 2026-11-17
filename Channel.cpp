@@ -53,7 +53,7 @@ void Channel::handleEvent()
         if(readCallback)
         {
             readCallback();
-
+            
         }
     }
 

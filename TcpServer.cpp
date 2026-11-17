@@ -38,22 +38,12 @@ struct BusinessTask
 //任务回调函数
 void processBusiness(void* arg)
 {
-    BusinessTask* task =
-        static_cast<BusinessTask*>(arg);
-
-    // ================================
-    // 1. worker 执行业务处理
-    // ================================
+    BusinessTask* task = static_cast<BusinessTask*>(arg);
 
     // 当前只做 /echo：返回请求中的原始 Body
     std::string result = task->data;
 
     // 以后可以在这里加入耗时计算、业务逻辑等
-
-
-    // ================================
-    // 2. 在 worker 内生成 HTTP Response
-    // ================================
 
     HttpResponse response;
 
@@ -74,10 +64,6 @@ void processBusiness(void* arg)
     std::string rawResponse = response.toString();
 
 
-    // ================================
-    // 3. 准备跨线程交接需要的数据
-    // ================================
-
     std::weak_ptr<Connection> weakConn =
         task->weakConn;
 
@@ -85,10 +71,6 @@ void processBusiness(void* arg)
 
     EventLoop* loop = task->loop;
 
-
-    // ================================
-    // 4. 将完成结果提交给 EventLoop
-    // ================================
 
     loop->queueInLoop(
         [weakConn,
@@ -104,10 +86,6 @@ void processBusiness(void* arg)
                 // 客户端连接已经销毁
                 return;
             }
-
-            // ========================
-            // 5. EventLoop 负责发送
-            // ========================
 
             conn->send(rawResponse);
 
@@ -292,13 +270,10 @@ int main()
                         return;
                     }
 
-                    // ==========================================
-                    // POST /echo：交给线程池异步处理
-                    // ==========================================
                     if(request.getMethod() == "POST" &&
                     request.getPath() == "/echo")
                     {
-                        // 1. 创建任务数据
+                        //创建任务数据
                         auto data = std::make_unique<BusinessTask>();
 
                         data->loop = &el;
@@ -313,7 +288,7 @@ int main()
                         data->keepAlive = request.shouldKeepAlive();
 
 
-                        // 2. 提交任务到线程池
+                        //提交任务到线程池
                         bool accepted = false;
 
                         try
@@ -334,7 +309,7 @@ int main()
                         }
 
 
-                        // 3. 如果线程池不接受任务
+                        //如果线程池不接受任务
                         if(!accepted)
                         {
                             HttpResponse response;
@@ -365,18 +340,18 @@ int main()
                         }
 
 
-                        // 4. 提交成功，线程池接管任务参数
+                        //提交成功，线程池接管任务参数
                         data.release();
 
 
-                        // 5. 当前请求已经解析完整
+                        //当前请求已经解析完整
                         offset += consumed;
 
-                        // 删除已处理的请求，保留后续请求
+                        //删除已处理的请求，保留后续请求
                         conn->consumeInput(offset);
 
 
-                        // 6. 暂停当前 Connection 的读事件
+                        //暂停当前 Connection 的读事件
                         conn->pauseReading();
 
                         // 当前请求的响应由 worker 完成后提交
